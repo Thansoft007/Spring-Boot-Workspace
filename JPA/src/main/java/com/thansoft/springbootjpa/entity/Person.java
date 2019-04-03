@@ -11,8 +11,13 @@ import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 @Entity
 @Table(name = "person")
@@ -24,11 +29,10 @@ import javax.persistence.TableGenerator;
 		@NamedNativeQuery(name = "Person.personCountNamedNative", query = "select count(*) as countNative from Person") })
 
 public class Person {
-
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "thansoft_sequence_generator")
-	@TableGenerator(name = "thansoft_sequence_generator", table = "thansoft_sequence", initialValue = 1000, valueColumnName = "sequence_id", pkColumnName = "sequence_key", pkColumnValue = "sequence_person")
-	private long id;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "custom_id_person")
+	@GenericGenerator(name = "custom_id_person", strategy = "com.thansoft.springbootjpa.generator.CustomIdentifierGenerator")
+	private String id;
 	@Column(name = "first_name")
 	private String firstName;
 	@Column(name = "last_name")
@@ -43,7 +47,7 @@ public class Person {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Person(long id, String firstName, String lastName, int age, double salary, Date createdDate) {
+	public Person(String id, String firstName, String lastName, int age, double salary, Date createdDate) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -53,11 +57,11 @@ public class Person {
 		this.createdDate = createdDate;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
